@@ -2,12 +2,19 @@
 using Travel.Models;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Extensions.Configuration;
 
 namespace Travel.Controllers
 {
     public class ToursController : Controller
     {
         private readonly int PageSize = 9;
+        private readonly IConfiguration _configuration;
+
+        public ToursController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
 
         private List<Tour> GetTours()
         {
@@ -103,6 +110,8 @@ namespace Travel.Controllers
             {
                 return NotFound();
             }
+
+            ViewBag.MapboxToken = _configuration["Mapbox:AccessToken"];
 
             return View(tour);
         }
