@@ -1,0 +1,86 @@
+﻿@model Travel.Models.Tour
+
+@{
+    ViewData["Title"] = "Tour Details - " + Model.Name;
+}
+
+<div class="container-xxl py-5">
+    <div class="container">
+        <div class="row g-5">
+            <div class="col-lg-6">
+                <!-- Bootstrap Carousel for Tour Images -->
+                <div id="tourCarousel" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        @for (int i = 0; i < Model.CarouselImages.Count; i++)
+                        {
+                            var image = Model.CarouselImages[i];
+                            var isActive = i == 0 ? "active" : "";
+                            <div class="carousel-item @isActive">
+                                <img src="@image" class="d-block w-100" alt="Tour Image @i">
+                            </div>
+                        }
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#tourCarousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#tourCarousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <h1>@Model.Name</h1>
+                <p>@Model.Description</p>
+                <p><strong>Location:</strong> @Model.Location</p>
+                <p><strong>Duration:</strong> @Model.DurationDays days</p>
+                <p><strong>Price:</strong> $@Model.Price</p>
+                @if (Model.Discount > 0)
+                {
+                    <p><strong>Discount:</strong> @Model.Discount% OFF</p>
+                }
+
+                <!-- Book Now Button -->
+                <a href="#" class="btn btn-primary btn-lg mt-3">Book Now</a>
+
+                <!-- The map div -->
+                <div id="map" style="height: 400px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-top: 20px;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- Include Mapbox GL JS -->
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
+
+    <!-- Initialize Mapbox with the access token passed from ViewBag -->
+    <script>
+        mapboxgl.accessToken = '@ViewBag.MapboxToken'; // Use the token from appsettings.json
+
+        var map = new mapboxgl.Map({
+            container: 'map', // Container ID for the map
+            style: 'mapbox://styles/mapbox/satellite-streets-v11', // Map style
+            center: [@Model.Longitude, @Model.Latitude], // Longitude, Latitude from the model
+            zoom: 10, // Zoom level
+            pitch: 45, // Angle the map for a 3D effect
+            bearing: -17.6 // Rotate the map for a dynamic view
+        });
+
+        // Add navigation control (zoom, rotation controls)
+        map.addControl(new mapboxgl.NavigationControl());
+
+        // Add a marker to the tour's location
+        new mapboxgl.Marker()
+            .setLngLat([@Model.Longitude, @Model.Latitude])
+            .addTo(map);
+
+        // Add popup to the marker
+        new mapboxgl.Popup({ offset: 25 })
+            .setLngLat([@Model.Longitude, @Model.Latitude])
+            .setHTML("<h5>@Model.Name</h5><p>@Model.Location</p>")
+            .addTo(map);
+    </script>
+}
