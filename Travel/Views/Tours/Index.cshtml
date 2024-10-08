@@ -1,0 +1,111 @@
+﻿@model Travel.Models.TourPaginationViewModel
+
+@{
+    ViewData["Title"] = "Tours";
+}
+
+<!-- Tours Start -->
+<div class="container-xxl py-5">
+    <div class="container">
+        <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+            <h6 class="section-title bg-white text-center text-primary px-3">Tours</h6>
+            <h1 class="mb-5">Explore Our Tours</h1>
+        </div>
+
+        <!-- Filter Form Start -->
+        <form method="get" action="@Url.Action("Index", "Tours")">
+            <div class="row">
+                <div class="col-md-3">
+                    <label for="minPrice">Min Price</label>
+                    <input type="number" class="form-control" name="minPrice" placeholder="Min Price" value="@(ViewContext.HttpContext.Request.Query["minPrice"])" />
+                </div>
+                <div class="col-md-3">
+                    <label for="maxPrice">Max Price</label>
+                    <input type="number" class="form-control" name="maxPrice" placeholder="Max Price" value="@(ViewContext.HttpContext.Request.Query["maxPrice"])" />
+                </div>
+                <div class="col-md-3">
+                    <label for="location">Location</label>
+                    <input type="text" class="form-control" name="location" placeholder="Location" value="@(ViewContext.HttpContext.Request.Query["location"])" />
+                </div>
+                <div class="col-md-3">
+                    <label for="minDuration">Min Duration (days)</label>
+                    <input type="number" class="form-control" name="minDuration" placeholder="Min Duration" value="@(ViewContext.HttpContext.Request.Query["minDuration"])" />
+                </div>
+                <div class="col-md-3">
+                    <label for="maxDuration">Max Duration (days)</label>
+                    <input type="number" class="form-control" name="maxDuration" placeholder="Max Duration" value="@(ViewContext.HttpContext.Request.Query["maxDuration"])" />
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-md-12">
+                    <button type="submit" class="btn btn-primary">Apply Filters</button>
+                </div>
+            </div>
+        </form>
+        <!-- Filter Form End -->
+
+        <div class="row g-4 mt-5">
+            @foreach (var tour in Model.Tours)
+            {
+                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+                    <div class="tour-item rounded overflow-hidden">
+                        <div class="position-relative">
+                            <img class="img-fluid" src="@tour.ImageUrl" alt="@tour.Name">
+                            @if (tour.Discount > 0)
+
+                            {
+                                <small class="position-absolute top-0 start-0 bg-primary text-white rounded-end m-4 py-1 px-3">@tour.Discount% OFF</small>
+                            }
+                        </div>
+                        <div class="p-4">
+                            <h5>@tour.Name</h5>
+                            <p>@tour.Description</p>
+                            <div class="d-flex justify-content-between">
+                                <span><i class="fa fa-map-marker-alt text-primary me-2"></i>@tour.Location</span>
+                                <span><i class="fa fa-calendar-alt text-primary me-2"></i>@tour.DurationDays Days</span>
+                            </div>
+                        </div>
+                        <div class="p-4 border-top">
+                            <div class="d-flex justify-content-between">
+                                <span class="text-primary">$@tour.Price</span>
+                                <a href="@Url.Action("Details", "Tours", new { id = tour.Id })" class="btn btn-sm btn-primary">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Pagination -->
+        <div class="row mt-5">
+            <div class="col">
+                <nav>
+                    <ul class="pagination justify-content-center">
+                        @if (Model.HasPreviousPage)
+
+                        {
+                            <li class="page-item">
+                                <a class="page-link" asp-action="Index" asp-route-page="@(Model.CurrentPage - 1)">Previous</a>
+                            </li>
+                        }
+                        @for (var i = 1; i <= Model.TotalPages; i++)
+
+                        {
+                            <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                                <a class="page-link" asp-action="Index" asp-route-page="@i">@i</a>
+                            </li>
+                        }
+                        @if (Model.HasNextPage)
+
+                        {
+                            <li class="page-item">
+                                <a class="page-link" asp-action="Index" asp-route-page="@(Model.CurrentPage + 1)">Next</a>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Tours End -->
