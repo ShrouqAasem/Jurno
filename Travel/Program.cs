@@ -10,6 +10,14 @@ namespace Travel
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.Services.AddDbContext<TravelDbContext>(options =>
+           options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+                .AddEntityFrameworkStores<TravelDbContext>()
+                .AddDefaultTokenProviders();
+
+
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
