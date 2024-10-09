@@ -138,14 +138,14 @@ namespace Travel.Controllers
             {
                 tours = tours.Where(t => t.DurationDays <= maxDuration.Value).ToList();
             }
-
+        
             // Pagination
             var paginatedTours = tours
                 .Skip((page - 1) * PageSize)
                 .Take(PageSize)
                 .ToList();
-
-            var viewModel = new TourPaginationViewModel
+            
+   var viewModel = new TourPaginationViewModel
             {
                 Tours = paginatedTours,
                 CurrentPage = page,

@@ -13,6 +13,5 @@
         public double Latitude { get; set; }
         public double Longitude { get; set; }
         public List<string> CarouselImages { get; set; } = new List<string>();
-        public ICollection<Booking> Bookings { get; set; }
     }
 }
