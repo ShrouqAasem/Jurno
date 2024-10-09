@@ -145,7 +145,7 @@ namespace Travel.Controllers
                 .Take(PageSize)
                 .ToList();
             
-   var viewModel = new TourPaginationViewModel
+            var viewModel = new TourPaginationViewModel
             {
                 Tours = paginatedTours,
                 CurrentPage = page,
