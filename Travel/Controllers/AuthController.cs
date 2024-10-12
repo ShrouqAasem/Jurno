@@ -143,7 +143,7 @@ namespace TravelBookingModels.Controllers
 
                         // Store user info in session
                         HttpContext.Session.SetString("UserId", user.Id);
-                        return RedirectToAction("Index", "Home"); // Redirect to a secure area
+                        return RedirectToAction("Index", "Home"); 
 
 
                     }
@@ -164,57 +164,114 @@ namespace TravelBookingModels.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+
+
+        //[HttpGet]
+        //public IActionResult PasswordManagement(string userId, string token, bool isReset = false)
+        //{
+        //    var model = new PasswordManagementViewModel
+        //    {
+        //        UserId = userId,
+        //        Token = token,
+        //        IsReset = isReset
+        //    };
+
+        //    return View(model);
+        //}
+
+
+
+
+        //[HttpPost]
+        //public async Task<IActionResult> PasswordManagement(PasswordManagementViewModel model)
+        //{
+        //    if (!string.IsNullOrEmpty(model.UserId) && !string.IsNullOrEmpty(model.Token) && model.IsReset)
+        //    {
+        //        // Reset Password flow
+        //        if (ModelState.IsValid)
+        //        {
+        //            var user = await _userManager.FindByIdAsync(model.UserId);
+        //            if (user == null)
+        //            {
+        //                ModelState.AddModelError(string.Empty, "User not found.");
+        //                return View("ResetPassword", model); // Return Reset Password view
+        //            }
+
+        //            var decodedToken = WebUtility.UrlDecode(model.Token);
+        //            var result = await _userManager.ResetPasswordAsync(user, decodedToken, model.NewPassword);
+
+        //            if (result.Succeeded)
+        //            {
+        //                ViewBag.Message = "Your password has been reset successfully.";
+        //                return View("ResetPassword", model); // Success
+        //            }
+
+        //            foreach (var error in result.Errors)
+        //            {
+        //                ModelState.AddModelError(string.Empty, error.Description);
+        //            }
+        //        }
+        //        return View("ResetPassword", model); // Show validation errors in Reset Password view
+        //    }
+        //    else
+        //    {
+        //        // Forgot Password flow
+        //        if (ModelState.IsValid)
+        //        {
+        //            var user = await _userManager.FindByEmailAsync(model.Email);
+        //            if (user == null)
+        //            {
+        //                ModelState.AddModelError(string.Empty, "User not found.");
+        //                return View("ForgotPassword", model); // Return Forgot Password view
+        //            }
+
+        //            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+        //            var resetLink = Url.Action("PasswordManagement", "Auth", new
+        //            {
+        //                userId = user.Id,
+        //                token = WebUtility.UrlEncode(token),
+        //                isReset = true
+        //            }, Request.Scheme);
+
+        //            await _emailService.SendEmailAsync(
+        //                model.Email,
+        //                "Reset Your Password",
+        //                $"Please reset your password by clicking here: <a href='{resetLink}'>Reset Password</a>");
+
+        //            ViewBag.Message = "A password reset link has been sent to your email.";
+        //        }
+        //        return View("ForgotPassword", model); // Show validation errors in Forgot Password view
+        //    }
+        //}
+
+        [HttpGet]
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+
+
+
         [HttpPost]
-        public async Task<IActionResult> PasswordManagement(PasswordManagementViewModel model)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
         {
             if (ModelState.IsValid)
             {
-                if (model.IsReset)
+                var user = await _userManager.FindByEmailAsync(model.Email);
+                if (user == null)
                 {
-                    // Process password reset
-                    var user = await _userManager.FindByIdAsync(model.UserId);
-                    if (user == null)
-                    {
-                        ModelState.AddModelError(string.Empty, "User not found.");
-                        return View(model);
-                    }
-
-                    var decodedToken = WebUtility.UrlDecode(model.Token);
-                    var result = await _userManager.ResetPasswordAsync(user, decodedToken, model.NewPassword);
-
-                    if (result.Succeeded)
-                    {
-                        ViewBag.Message = "Your password has been reset successfully.";
-                        return View(model); // Display success message
-                    }
-
-                    foreach (var error in result.Errors)
-                    {
-                        ModelState.AddModelError(string.Empty, error.Description);
-                    }
+                    ModelState.AddModelError(string.Empty, "User not found.");
+                    return View(model);
                 }
-                else
-                {
-                    // Process forgot password
-                    var user = await _userManager.FindByEmailAsync(model.Email);
-                    if (user == null)
-                    {
-                        ModelState.AddModelError(string.Empty, "User not found.");
-                        return View(model);
-                    }
 
-                    // Generate the reset token
-                    var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-                    var resetLink = Url.Action("PasswordManagement", "Auth", new { userId = user.Id, token = WebUtility.UrlEncode(token), isReset = true }, Request.Scheme);
+                // Generate the token
+                var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                var resetLink = Url.Action("ResetPassword", "Auth", new { userId = user.Id, token = WebUtility.UrlEncode(token) }, Request.Scheme);
 
-                    // After generating the reset link
-
-                    await _emailService.SendEmailAsync(model.Email, "Reset Your Password", $"Please reset your password by clicking here: <a href='{resetLink}'>link</a>");
-
-                    // Display the reset link on the page or send via email
-                    ViewBag.ResetLink = resetLink;
-                    ViewBag.Message = "A password reset link has been sent to your email.";
-                }
+                // Display the reset link on the page
+                ViewBag.ResetLink = resetLink;
             }
 
             return View(model);
@@ -222,7 +279,58 @@ namespace TravelBookingModels.Controllers
 
 
 
-    }
+
         
+        [HttpGet]
+        public IActionResult ResetPassword(string userId, string token)
+        {
+            var model = new ResetPasswordViewModel { UserId = userId, Token = token };
+            return View(model);
+        }
+
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            // Find the user by ID
+            var user = await _userManager.FindByIdAsync(model.UserId);
+            if (user == null)
+            {
+                // If user is not found, consider the reset successful for security reasons
+                ViewBag.Message = "Password reset successful.";
+                return View(model);
+            }
+
+            var decodedToken = WebUtility.UrlDecode(model.Token);
+            var result = await _userManager.ResetPasswordAsync(user, decodedToken, model.NewPassword);
+
+            if (result.Succeeded)
+            {
+                ViewBag.Message = "Your password has been reset successfully.";
+                return View(model); // Stay on the same page and show success message
+            }
+
+            // If reset fails, add errors to the ModelState
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
+            }
+
+            // Return the view with validation errors if the reset fails
+            return View(model);
+        }
+
+
+
+
+    }
+
 }
 

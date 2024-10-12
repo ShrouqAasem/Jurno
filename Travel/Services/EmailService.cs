@@ -26,7 +26,7 @@ namespace Travel.Services
             {
                 var mailMessage = new MailMessage
                 {
-                    From = new MailAddress("your-email@example.com"), // Change this to your email
+                    From = new MailAddress(_smtpSettings.FromEmail), 
                     Subject = subject,
                     Body = message,
                     IsBodyHtml = true,
@@ -37,5 +37,7 @@ namespace Travel.Services
             }
         }
     }
+
+
 }
 
