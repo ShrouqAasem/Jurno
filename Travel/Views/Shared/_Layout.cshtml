@@ -78,6 +78,10 @@
                     <a asp-action="Index" asp-controller="About" class="nav-item nav-link @(ViewContext.RouteData.Values["controller"].ToString() == "About" ? "active" : "")">About</a>
                     <a asp-action="Index" asp-controller="Contact" class="nav-item nav-link @(ViewContext.RouteData.Values["controller"].ToString() == "Contact" ? "active" : "")">Contact</a>
                     <a asp-action="Index" asp-controller="Tours" class="nav-item nav-link @(ViewContext.RouteData.Values["controller"].ToString() == "Tours" ? "active" : "")">Tours</a>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <a asp-action="Account" asp-controller="User" class="nav-item nav-link @(ViewContext.RouteData.Values["controller"].ToString() == "User" ? "active" : "")">My Profile</a>
+                    }
                 </div>
                 
                 <ul class="navbar-nav ms-auto">
