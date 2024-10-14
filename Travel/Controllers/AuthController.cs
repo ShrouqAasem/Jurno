@@ -81,7 +81,7 @@ namespace TravelBookingModels.Controllers
                     await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal);
 
                     // Redirect to the login 
-                    return RedirectToAction("Login", "Auth");
+                    return RedirectToAction("Index", "Home");
                 }
 
                 // Add errors to ModelState if the user creation fails
