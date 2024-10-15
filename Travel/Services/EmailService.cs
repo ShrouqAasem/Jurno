@@ -8,34 +8,44 @@ namespace Travel.Services
 {
     public class EmailService : IEmailService
     {
-        private readonly SmtpSettings _smtpSettings;
+       
+            private readonly SmtpClient _smtpClient;
 
-        public EmailService(IOptions<SmtpSettings> smtpSettings)
-        {
-            _smtpSettings = smtpSettings.Value;
-        }
+            public EmailService()
+            {
+                _smtpClient = new SmtpClient
+                {
+                    Host = "journo024@gmail.com",
+                    Port = 587,
+                    EnableSsl = true,
+                    Credentials = new NetworkCredential("journo024@gmail.com", "ggsf jzun kiar iagb")
+                };
+            }
 
         public async Task SendEmailAsync(string email, string subject, string message)
         {
-            using (var smtpClient = new SmtpClient(_smtpSettings.Host)
+            
+            var mailMessage = new MailMessage();
+            mailMessage.To.Add(email);
+            mailMessage.Subject = subject;
+            mailMessage.Body = message;
+            mailMessage.IsBodyHtml = true; // This is the key to send HTML content
+            mailMessage.From = new MailAddress("journo024@gmail.com");
+
+
+
+            using (var smtpClient = new SmtpClient("smtp.gmail.com"))
             {
-                Port = _smtpSettings.Port,
-                Credentials = new NetworkCredential(_smtpSettings.UserName, _smtpSettings.Password),
-                EnableSsl = _smtpSettings.EnableSsl,
-            })
-            {
-                var mailMessage = new MailMessage
-                {
-                    From = new MailAddress(_smtpSettings.FromEmail), 
-                    Subject = subject,
-                    Body = message,
-                    IsBodyHtml = true,
-                };
-                mailMessage.To.Add(email);
+                smtpClient.Port = 587;
+                smtpClient.Credentials = new NetworkCredential("journo024@gmail.com", "ggsf jzun kiar iagb");
+                smtpClient.EnableSsl = true;
 
                 await smtpClient.SendMailAsync(mailMessage);
             }
+
+            
         }
+
     }
 
 

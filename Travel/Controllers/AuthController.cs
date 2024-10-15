@@ -270,10 +270,26 @@ namespace TravelBookingModels.Controllers
 
                 // Generate the token
                 var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-                var resetLink = Url.Action("ResetPassword", "Auth", new { userId = user.Id, token = WebUtility.UrlEncode(token) }, Request.Scheme);
+                var resetLink = Url.Action("ResetPassword", "Auth", new { userId = user.Id, token = token }, Request.Scheme);
 
-                // Display the reset link on the page
-                ViewBag.ResetLink = resetLink;
+                // Create the email content
+                var subject = "Reset Password";
+                string emailBody = $"Please reset your password by clicking on the link below:<br><a href='{resetLink}'>Reset Password</a>";
+                
+                // Send the email using your email service
+                try
+                {
+                    await _emailService.SendEmailAsync(user.Email, subject, emailBody);
+                    ViewBag.Message = "A password reset link has been sent to your email address.";
+                }
+                catch (Exception ex)
+                {
+                    // Handle email sending failure
+                    ModelState.AddModelError(string.Empty, "There was an error sending the email. Please try again.");
+                    return View(model);
+                }
+
+                
             }
 
             return View(model);
@@ -310,7 +326,8 @@ namespace TravelBookingModels.Controllers
                 return View(model);
             }
 
-            var decodedToken = WebUtility.UrlDecode(model.Token);
+            //var decodedToken = WebUtility.UrlDecode(model.Token);
+            var decodedToken = model.Token;
             var result = await _userManager.ResetPasswordAsync(user, decodedToken, model.NewPassword);
 
             if (result.Succeeded)
