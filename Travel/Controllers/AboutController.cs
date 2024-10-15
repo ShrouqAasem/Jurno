@@ -6,6 +6,7 @@ namespace Travel.Controllers
     {
         public IActionResult Index()
         {
+            ViewBag.PageTitle = "About";
             return View();
         }
     }

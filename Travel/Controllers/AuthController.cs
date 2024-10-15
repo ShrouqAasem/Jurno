@@ -40,6 +40,7 @@ namespace TravelBookingModels.Controllers
         [HttpGet]
         public IActionResult Register()
         {
+            ViewBag.PageTitle = "Register";
             return View();
         }
 
@@ -102,6 +103,7 @@ namespace TravelBookingModels.Controllers
         [HttpGet]
         public IActionResult Login()
         {
+            ViewBag.PageTitle = "LogIn";
             return View();
         }
 

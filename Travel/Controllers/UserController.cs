@@ -26,6 +26,7 @@ namespace Travel.Controllers
         [HttpGet]
         public async Task<IActionResult> Account()
         {
+            ViewBag.PageTitle = "My Profile";
             var user = await _userManager.GetUserAsync(User);
 
             // Ensure user is not null

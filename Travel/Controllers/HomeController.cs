@@ -15,10 +15,16 @@ namespace Travel.Controllers
 
         public IActionResult Index()
         {
+            ViewBag.PageTitle = "Enjoy Your Vacation With Us";
             return View();
         }
 
         public IActionResult Privacy()
+        {
+            return View();
+        }
+
+        public IActionResult TermsandConditions()
         {
             return View();
         }

@@ -5,6 +5,7 @@ using System.Linq;
 using Microsoft.Extensions.Configuration;
 using Travel.ViewModel;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Win32;
 
 namespace Travel.Controllers
 {
@@ -115,6 +116,7 @@ namespace Travel.Controllers
             int? maxDuration = null
         )
         {
+            ViewBag.PageTitle = "Tours";
             var tours = GetTours();
 
             // Apply filters
