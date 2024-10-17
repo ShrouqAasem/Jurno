@@ -1,0 +1,50 @@
+﻿@model Travel.Models.TravelGuide
+
+<h1>@Model.Name</h1>
+<img src="@Model.ImageUrl" alt="@Model.Name" class="img-fluid mb-4" />
+<p>@Model.Description</p>
+
+<h2>Activities</h2>
+<ul>
+    @if (Model.Activities != null && Model.Activities.Any())
+    {
+        foreach (var activity in Model.Activities)
+        {
+            <li>@activity</li>
+        }
+    }
+    else
+    {
+        <li>No activities available.</li>
+    }
+</ul>
+
+<h2>Hotels</h2>
+<ul>
+    @if (Model.Hotels != null && Model.Hotels.Any())
+    {
+        foreach (var hotel in Model.Hotels)
+        {
+            <li>@hotel</li>
+        }
+    }
+    else
+    {
+        <li>No hotels available.</li>
+    }
+</ul>
+
+<h2>Restaurants</h2>
+<ul>
+    @if (Model.Restaurants != null && Model.Restaurants.Any())
+    {
+        foreach (var restaurant in Model.Restaurants)
+        {
+            <li>@restaurant</li>
+        }
+    }
+    else
+    {
+        <li>No restaurants available.</li>
+    }
+</ul>

@@ -1,0 +1,31 @@
+﻿@model List<Travel.Models.TravelGuide>
+
+<div class="container">
+    <h1>Travel Destinations</h1>
+
+    <div class="row">
+        @if (Model != null && Model.Any())
+        {
+            foreach (var destination in Model)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <img src="@destination.ImageUrl" class="card-img-top" alt="@destination.Name" />
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <a href="@Url.Action("Details", "TravelGuide", new { id = destination.DestinationId })">@destination.Name</a>
+                            </h5>
+                            <p class="card-text">@destination.Description</p>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <p>No destinations available.</p>
+        }
+    </div>
+</div>
+
+
