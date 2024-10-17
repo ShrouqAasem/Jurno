@@ -1,7 +1,10 @@
-﻿namespace Travel.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Travel.Models
 {
     public class Tour
     {
+        [Key]
         public int Id { get; set; }
         public string Name { get; set; }
         public string Location { get; set; }

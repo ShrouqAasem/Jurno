@@ -34,6 +34,14 @@ namespace Travel.Models
             .WithMany(tp => tp.Bookings)
             .HasForeignKey(b => b.TourId);
 
+            modelBuilder.Entity<Tour>()
+              .Property(t => t.Price)
+              .HasColumnType("decimal(18, 2)");
+
+            modelBuilder.Entity<Tour>()
+                .Property(t => t.Discount)
+                .HasColumnType("decimal(5, 2)");
+
         }
     }
 }
