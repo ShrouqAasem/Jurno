@@ -1,0 +1,12 @@
+﻿@{
+    ViewData["Title"] = "Payment";
+}
+
+<h2>Payment</h2>
+
+<form asp-action="ProcessPayment" method="post">
+    <label for="amount">Amount:</label>
+    <input type="number" name="amount" id="amount" required />
+    <button type="submit">Pay with PayPal</button>
+</form>
+
